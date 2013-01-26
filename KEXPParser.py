@@ -3,49 +3,46 @@
 
 import sys
 import os
-import time
 import urllib2
-import HTMLParser
 from BeautifulSoup import BeautifulSoup
+import bleach
 
 
 # This is the basic address of the location we've saved the IR HTML 
 # Adding on the page parameter will get us from page to page.
-BASE_LIST_URL = 'file:///Users/damian/Documents/Lake%20Hill%20Analytics/Code/Python/ir500-list-pages/'
-
-# the individual file names
-LIST_PAGES_SUBDIR = 'ir500-list-pages-'
-
-# We found this by looking at the pages
-# last page is 5, so need to get up to 6 for the range() function to work
-LAST_PAGE_NUMBER = 6
+BASE_LIST_URL = 'file:///Users/damian/Documents/Dropbox/Lake-Hill-Analytics/Code/Projects/KEXP/kexp-source-playlists/'
 
 #first do it once
-i = 1
-URL = BASE_LIST_URL + LIST_PAGES_SUBDIR + str(i) + '.html'
+URL = BASE_LIST_URL + 'kexp-source-playlists-2013_01_05_8am.html'
+
+# Name an outfile
+OUT = 'kexp-playlist-output.txt'
 
 try:
 	page = urllib2.urlopen(URL)
+	print 'Grabbed: ' + URL
+
 except urllib2.URLError:
 	print 'Failed to fetch: ' + URL
 	
 try:
 	soup = BeautifulSoup(page)
+	print 'Made Soup'
+
 except HTMLParser.HTMLParseError:
 	print 'Failed to parse: ' + URL
 	
-anchorTags = soup.findAll('a')
-paraTags = soup.findAll('p')
-	
-for a in anchorTags:
-	if a.has_key('name') :
-		print a['name']
-		
-for p in paraTags:
-	if p.has_key('class') :
-		if p['class'] == 'rank' :
-			print p.contents[0]
-		if p['class'] == 'company_name' :
-			print p.contents[0].next
-		if p['class'] == 'company_category' :
-			print p.contents[0]
+#artistNames = soup.findAll("div", attrs={'class' : re.compile("Name$")})
+artistNames = soup.findAll("div", attrs={'class' : 'ArtistName'})
+releaseNames = soup.findAll("div", attrs={'class' : 'ReleaseName'})
+trackNames = soup.findAll("div", attrs={'class' : 'TrackName'})
+
+f = open(OUT, "w")
+
+for i in range(len(artistNames)):
+	artistNames[i].contents[0] = bleach.clean(artistNames[i].contents[0], tags=[], strip=True)
+	f.write(artistNames[i].contents[0] + '\n')
+	f.write(releaseNames[i].contents[0] + '\n')
+	f.write(trackNames[i].contents[0] + '\n')
+
+f.close()
