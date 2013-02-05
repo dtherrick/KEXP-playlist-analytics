@@ -4,7 +4,7 @@
 import sys
 import os
 import urllib2
-from BeautifulSoup import BeautifulSoup
+from bs4 import BeautifulSoup
 import bleach
 
 
