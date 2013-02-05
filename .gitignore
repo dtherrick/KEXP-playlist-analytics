@@ -40,4 +40,5 @@ Thumbs.db
 # KEXP Project specific files #
 ###############################
 AWSKeys
-kexp-soure-playlists/
+kexp-source-playlists/
+env/
