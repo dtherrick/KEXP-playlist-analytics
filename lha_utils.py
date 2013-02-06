@@ -54,15 +54,15 @@ def store_private_data(bucket_name, key_name, path_to_file):
 
 	LHA_AWS_ACCESS_KEY = 'AKIAJWV4X2TDHPBE5WIQ'
 	LHA_AWS_SECRET_KEY = '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'
-	
-	s3 = boto.connect_s3(aws_access_key_id = LHA_AWS_ACCESS_KEY, aws_secret_access_key = LHA_AWS_SECRET_KEY)
+
+	s3 = boto.connect_s3(aws_access_key_id=LHA_AWS_ACCESS_KEY, aws_secret_access_key=LHA_AWS_SECRET_KEY)
 	bucket = s3.lookup(bucket_name)
 
 	# Get a new, blank Key object from the bucket.  This Key object only
 	# exists locally until we actually store data in it.
 	key = bucket.new_key(key_name)
 
-    # Now, overwrite the data with the contents of the file
+	# Now, overwrite the data with the contents of the file
 	key.set_contents_from_filename(path_to_file)
 
 	return key
