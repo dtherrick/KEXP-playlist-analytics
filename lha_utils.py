@@ -3,6 +3,8 @@
 
 import datetime
 import boto
+import os
+from boto.s3.key import Key
 
 
 def daterange(start_date, end_date):
@@ -66,3 +68,21 @@ def store_private_data(bucket_name, key_name, path_to_file):
 	key.set_contents_from_filename(path_to_file)
 
 	return key
+
+
+def get_s3_data(bucket_name, key_name, path_to_file):
+	"""
+	Write the contents of an S3 ky into a local file
+	bucket_name   The name of the S3 Bucket.
+	key_name      The name of the object containing the data in S3.
+	path_to_file  Fully qualified path to local file.
+	"""
+
+	LHA_AWS_ACCESS_KEY = 'AKIAJWV4X2TDHPBE5WIQ'
+	LHA_AWS_SECRET_KEY = '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'
+
+	s3 = boto.connect_s3(aws_access_key_id=LHA_AWS_ACCESS_KEY, aws_secret_access_key=LHA_AWS_SECRET_KEY)
+	bucket = s3.get_bucket(bucket_name)
+	k = Key(bucket)
+	k.key = key_name
+	k.get_contents_to_filename(path_to_file)
