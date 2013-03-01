@@ -70,7 +70,6 @@ for l in bucket_list:
 	DIR_NAME = DIR_BASE + key_string
 
 	try:
-#		lha_utils.get_s3_data(BUCKET_NAME, KEY_NAME, DIR_NAME)
 		l.get_contents_to_filename(DIR_NAME)
 		logging.info("Successfully grabbed file: " + key_string)
 	except:
@@ -104,12 +103,21 @@ for l in bucket_list:
 	showName[0].contents[1] = bleach.clean(showName[0].contents[1], tags=[], strip=True)
 	strippedDate = airDate[0].contents[0].split(' - ')[0]
 
+	if not showHost[0].contents:
+		showHost[0].contents.insert(0, "No Host Provided")
+
+	if not showName[0].contents:
+		showName[0].contents.insert(0, "No Show Name Provided")
+
+	if not strippedDate:
+		strippedDate = "No Show Date Provided"
+
 	# Now get all the ones that are in the playlist
 	artistNames = soup.findAll("div", attrs={'class': 'ArtistName'})
 	releaseNames = soup.findAll("div", attrs={'class': 'ReleaseName'})
 	trackNames = soup.findAll("div", attrs={'class': 'TrackName'})
 	airTime = soup.findAll("div", attrs={'class': 'AirDate'})
-#	DJComments = soup.findAll("div", attrs={'class': 'CommentText'})
+	DJComments = soup.findAll("div", attrs={'class': 'CommentText'})
 
 	"""
 	PARSING FINISHED, NOW WRITE TO MYSQL
@@ -133,9 +141,9 @@ for l in bucket_list:
 				logging.info("Successfully added: " + showHost[0].contents[0])
 			except:
 				db.rollback()
-				logging.info("Failed to insert data")
+				logging.info("Failed to insert data: Hosts")
 	except:
-		logging.info("Data Check failed")
+		logging.info("Data Check failed (Hosts)")
 
 	"""
 	END HOSTS
@@ -159,9 +167,9 @@ for l in bucket_list:
 				logging.info("Successfully added: " + showName[0].contents[1])
 			except:
 				db.rollback()
-				logging.info("Failed to insert data")
+				logging.info("Failed to insert data: Show Name")
 	except:
-		logging.info("Data Check failed")
+		logging.info("Data Check failed (Show Name)")
 
 	"""
 	END SHOW NAME
@@ -171,6 +179,24 @@ for l in bucket_list:
 		artistNames[i].contents[0] = bleach.clean(artistNames[i].contents[0], tags=[], strip=True)
 		airTime[i].contents[0] = bleach.clean(airTime[i].contents[0], tags=[], strip=True)
 #		DJComments[i].contents[2] = DJComments[i].contents[2].strip('\t\n')
+
+		# Make sure we actually have data to populate.
+		# If it doesn't exist then pop in a N/A or something similar
+
+		if not artistNames[i].contents:
+			artistNames[i].contents.insert(0, "No Artist")
+
+		if not releaseNames[i].contents:
+			releaseNames[i].contents.insert(0, "No Album")
+
+		if not trackNames[i].contents:
+			trackNames[i].contents.insert(0, "No Track")
+
+		if not airTime[i].contents:
+			airTime[i].contents.insert(0, "No AirTime")
+
+#		if (len(DJComments[i].contents[2]) == 0):
+#			DJComments[i].contents[2] = "No DJ Comment"
 
 		"""
 		ARTIST
@@ -190,7 +216,7 @@ for l in bucket_list:
 					logging.info("Successfully added: " + artistNames[i].contents[0])
 				except:
 					db.rollback()
-					logging.info("Failed to insert data")
+					logging.info("Failed to insert data: Artist Name")
 		except:
 			logging.info("Data Check failed (artist name)")
 
@@ -216,7 +242,7 @@ for l in bucket_list:
 					logging.info("Successfully added: " + releaseNames[i].contents[0])
 				except:
 					db.rollback()
-					logging.info("Failed to insert data")
+					logging.info("Failed to insert data: Album")
 		except:
 			logging.info("Data Check failed (album name)")
 
@@ -251,7 +277,7 @@ for l in bucket_list:
 					logging.info("Successfully added: " + trackNames[i].contents[0])
 				except:
 					db.rollback()
-					logging.info("Failed to insert data")
+					logging.info("Failed to insert data (Song)")
 		except:
 			logging.info("Data Check failed (song name)")
 
@@ -291,7 +317,7 @@ for l in bucket_list:
 			logging.info("Successfully added (playlist): " + trackNames[i].contents[0])
 		except:
 			db.rollback()
-			logging.info("Failed to insert data")
+			logging.info("Failed to insert data (playlist)")
 
 		"""
 		END PLAYLIST
