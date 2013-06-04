@@ -1,0 +1,2 @@
+INFO 06/03/2013 09:05:03 PM Started Page Grabs
+INFO 06/03/2013 09:05:03 PM Successfully connected to database
