@@ -1,2 +1,2 @@
-INFO 06/03/2013 09:05:03 PM Started Page Grabs
-INFO 06/03/2013 09:05:03 PM Successfully connected to database
+INFO 06/14/2013 08:53:34 PM Starting Gracenote API grabbing
+INFO 06/14/2013 08:53:34 PM Successfully connected to database
