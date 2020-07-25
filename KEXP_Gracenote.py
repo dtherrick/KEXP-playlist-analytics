@@ -45,7 +45,7 @@ LOG SETUP COMPLETE
 
 # Connect to the KEXP source database
 try:
-	db = MySQLdb.connect(host="lhakexpmaster.c1kvj0gfryqy.us-east-1.rds.amazonaws.com", port=3306, user="lha_kexp_proof", passwd="Statesman1997", db="lhaKEXPMaster")
+	db = MySQLdb.connect(host="lhakexpmain.c1kvj0gfryqy.us-east-1.rds.amazonaws.com", port=3306, user="lha_kexp_proof", passwd="Statesman1997", db="lhaKEXPMain")
 	cursor = db.cursor()
 	logging.info("Successfully connected to database")
 except:
